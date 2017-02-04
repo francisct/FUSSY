@@ -10,27 +10,53 @@ namespace FussyBackEnd
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+
+        BusRepo busRepo = new BusRepo();
+        
+       
+
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        [Route("init")]
+        public void init()
         {
-            return new string[] { "value1", "value2" };
+            Bus bus1 = new Bus(1);
+            Bus bus2 = new Bus(2);
+            Bus bus3 = new Bus(3);
+            Bus bus4 = new Bus(4);
+            Bus bus5 = new Bus(5);
+
+            busRepo.AddBus(bus1);
+            busRepo.AddBus(bus2);
+            busRepo.AddBus(bus3);
+            busRepo.AddBus(bus4);
+            busRepo.AddBus(bus5);
         }
 
         // GET api/values/5
         [HttpPost]
         [Route("updateBusPosition")]
-        public IEnumerable<double> SearchByParameters([FromBody] User user)
+        public void updateBusPosition([FromBody] User httpUser)
         {
-            return new double[] { user.latitude, user.longitude };
+            Bus currentBus = busRepo.getBus(httpUser.id);
+            if (currentBus != null)
+            {
+                currentBus.AddUser(httpUser);
+                currentBus.latitude = currentBus.AverageLat();
+                currentBus.longitude = currentBus.AverageLon();
+            }
+            
 
         }
-        
+
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public IEnumerable<double> getBusPosition(int id)
         {
+            double lat = busRepo.getBus(id).latitude;
+            double lon = busRepo.getBus(id).longitude;
+            return new double[] {lat,lon};
         }
 
         // PUT api/values/5

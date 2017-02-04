@@ -12,24 +12,33 @@ namespace FussyBackEnd
         public double longitude { get; set; }
         public double latitude { get; set; }
         public List<User> userList { get; set; }
+        public Bus(int id)
+        {
+            this.id = id;
+        }
 
-
+        public Bus(int id,double longitude, double latitude, List<User> userList)
+        {
+            this.id = id;
+            this.longitude = longitude;
+            this.latitude = latitude;
+            this.userList = userList;
+        }
 
      
         public void AddUser(User newUser)
         {
             foreach (User user in userList)
             {
-                if (newUser.getId() == user.getId())
+                if (newUser.id == user.id)
                 {
-
+                    return;
                 }
-                else
-                {
-                    userList.Add(newUser);
-                }
+                
 
             }
+            userList.Add(newUser);
+            return;
         }
 
         public void RemoveUser(User oldUser)
@@ -39,13 +48,10 @@ namespace FussyBackEnd
                 if (oldUser.id == user.id)
                 {
                     userList.Remove(oldUser);
-                }
-                else
-                {
-                    
-                }
-
+                    return;
+                }              
             }
+            return;
         }
 
         public double AverageLat()
