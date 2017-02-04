@@ -22,7 +22,7 @@ namespace FussyBackEnd
         [Route("updateBusPosition")]
         public IEnumerable<double> SearchByParameters([FromBody] User user)
         {
-            return new double[] { 1,2 };
+            return new double[] { user.latitude, user.longitude };
 
         }
         
