@@ -47,7 +47,8 @@ namespace FussyBackEnd
             loggerFactory.AddDebug();
 
             app.UseApplicationInsightsRequestTelemetry();
-
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseMvc();

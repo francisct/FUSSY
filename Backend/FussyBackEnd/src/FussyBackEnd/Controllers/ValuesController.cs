@@ -82,6 +82,19 @@ namespace FussyBackEnd
             return new double[] {lat,lon};
         }
 
-      
+        [HttpGet]
+        [Route("setBusPosition")]
+        public IEnumerable<double> Get([FromQuery]int id, [FromQuery] double lat, [FromQuery] double lon)
+        {
+            Bus bus = busRepo.getBus(id);
+            if (bus != null)
+            {
+                bus.lat = lat;
+                bus.lon = lon;
+            }
+            return new double[] { lat, lon };
+        }
+
+
     }
 }

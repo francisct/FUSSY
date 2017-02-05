@@ -38,6 +38,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name="com.example.franc.fussy.BusLocationService"></service>
+        <receiver android:name="com.example.franc.fussy.YourWakefulReceiver"></receiver>
     </application>
 
 </manifest>
