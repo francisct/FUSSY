@@ -11,7 +11,7 @@ namespace FussyBackEnd
     public class ValuesController : Controller
     {
 
-        BusRepo busRepo;
+        static BusRepo busRepo;
         
        public ValuesController()
         {
