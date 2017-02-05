@@ -1,15 +1,23 @@
 package com.example.franc.fussy;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.franc.fussy.model.Bus;
 import com.example.franc.fussy.model.User;
@@ -20,22 +28,28 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
-    private GoogleMap mMap;
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback  {
+    GoogleMap mMap;
     private LocationManager locationManager;
     User user;
-    BusService busService;
-
+    DataService dataService;
+    int busNo = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        user = new User();
         setContentView(R.layout.activity_main);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -69,14 +83,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.github.com/")
+                .baseUrl("https://localhost:65529/api/values/")
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
-        busService = retrofit.create(BusService.class);
-        User user = new User();
+        dataService = retrofit.create(DataService.class);
 
 
     }
+
 
 
     /**
@@ -97,16 +111,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void sendNewLocation(Location location){
         user.lat = location.getLatitude();
         user.lon = location.getLongitude();
-        Call call = busService.updateBusPosition(user);
+        Call<ResponseBody> call = dataService.updateBusPosition(user.id, user.bus, user.lat, user.lon);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     public void busButtonOnClick(View v){
-        int busNo = 0;
-        Call bus= busService.getBusPosition(busNo);
-        bus.enqueue(new Callback<Bus>() {
+        TextView text = (TextView) findViewById(R.id.editText2);
+        busNo = Integer.parseInt(text.getText().toString());
+
+        Call call= dataService.getBusPosition(busNo);
+        call.enqueue(new Callback<Bus>() {
             @Override
             public void onResponse(Call<Bus> call, Response<Bus> response) {
-                 displayBus(response.body());
+               displayBus(response.body());
             }
 
             @Override
@@ -116,15 +143,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void displayBus(Bus bus){
-        LatLng latLng = new LatLng(bus.lat, bus.lon);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(5));
-        mMap.addMarker(new MarkerOptions().position(latLng).title("You are here!"));
-    }
 
+    public void moveToPosition(){
 
-    public void getPosition(View v){
         String locationProvider = LocationManager.NETWORK_PROVIDER;
         if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
 
@@ -133,5 +154,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
         sendNewLocation(lastKnownLocation);
+    }
+
+    private void displayBus(Bus bus) {
+        LatLng latLng = new LatLng(bus.lat, bus.lon);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(5));
+        mMap.addMarker(new MarkerOptions().position(latLng).title("You are here!"));
     }
 }

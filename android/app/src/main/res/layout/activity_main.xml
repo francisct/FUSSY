@@ -4,24 +4,48 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.franc.fussy.MapsActivity">
+    tools:context="com.example.franc.fussy.MapsActivity"
+    android:gravity="center_horizontal">
 
-    <EditText
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/editText2" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:text="Button"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/button2"
-        android:onClick="getPosition" />
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/activity_maps" />
 
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="507dp"
-        layout="@layout/activity_maps" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="332dp"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="18dp">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/editText2"
+                android:selectAllOnFocus="true"
+                android:text="0"
+                android:layout_weight="1"
+                 />
+
+            <Button
+                android:background="#555555"
+                android:text="Search"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/Search"
+                android:onClick="busButtonOnClick"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </RelativeLayout>
+
 </LinearLayout>

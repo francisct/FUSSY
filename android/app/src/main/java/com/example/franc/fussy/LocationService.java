@@ -7,6 +7,4 @@ package com.example.franc.fussy;
 public class LocationService {
 
     static int MY_PERMISSION_ACCESS_COURSE_LOCATION;
-
-
 }
