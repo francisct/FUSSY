@@ -32,11 +32,19 @@ namespace FussyBackEnd
             }
         }
 
+      
 
         [HttpGet]
-        public String Get()
+        [Route("createUser")]
+        public int Get()
         {
-            return "Completement correct";
+            int count = 1;
+            foreach (Bus bus in busRepo.busList)
+            {
+                count =+ bus.userList.Count();
+                
+            }
+            return count++;
         }
 
         [HttpGet]
