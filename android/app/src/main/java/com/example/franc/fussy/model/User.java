@@ -16,6 +16,6 @@ public class User {
     public int bus;
 
     public User(){
-
+        id = 0;
     }
 }

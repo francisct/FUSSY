@@ -18,12 +18,15 @@ import retrofit2.http.Query;
 
 public interface DataService {
 
-    @GET("/fussybus/updateBusPosition")
-    Call<ResponseBody> updateBusPosition(@Query("user") int user,
-                                         @Query("bus") int bus,
+    @GET("createUser")
+    Call<ResponseBody> createUser();
+
+    @GET("updateBusPosition")
+    Call<ResponseBody> updateBusPosition(@Query("userId") int user,
+                                         @Query("busId") int bus,
                                          @Query("lat") double lat,
                                          @Query("lon") double lon);
 
-    @GET("/fussybus/getBusPosition")
-    Call<Bus> getBusPosition(@Query("bus") int bus);
+    @GET("getBusPosition")
+    Call<Bus> getBusPosition(@Query("id") int id);
 }

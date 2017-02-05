@@ -83,7 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://localhost:65529/api/values/")
+                .baseUrl("http://fussybus.azurewebsites.net/api/values/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         dataService = retrofit.create(DataService.class);
@@ -109,20 +109,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void sendNewLocation(Location location){
-        user.lat = location.getLatitude();
-        user.lon = location.getLongitude();
-        Call<ResponseBody> call = dataService.updateBusPosition(user.id, user.bus, user.lat, user.lon);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+        if (user.id != 0) {
+            user.lat = location.getLatitude();
+            user.lon = location.getLongitude();
+            Call<ResponseBody> call = dataService.updateBusPosition(user.id, user.bus, user.lat, user.lon);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-            }
+                }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     public void busButtonOnClick(View v){
@@ -154,6 +156,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
         sendNewLocation(lastKnownLocation);
+        Call<ResponseBody> call = dataService.createUser();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                user.id = Integer.parseInt(response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     private void displayBus(Bus bus) {
