@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.franc.fussy.model.Bus;
 import com.example.franc.fussy.model.User;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,6 +38,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback  {
     GoogleMap mMap;
@@ -50,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
 
         user = new User();
+        user.bus = 2;
         setContentView(R.layout.activity_main);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -84,10 +87,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://fussybus.azurewebsites.net/api/values/")
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         dataService = retrofit.create(DataService.class);
 
+        createUser();
 
     }
 
@@ -131,40 +136,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TextView text = (TextView) findViewById(R.id.editText2);
         busNo = Integer.parseInt(text.getText().toString());
 
-        Call call= dataService.getBusPosition(busNo);
-        call.enqueue(new Callback<Bus>() {
+        Call<double[]> call= dataService.getBusPosition(busNo);
+        call.enqueue(new Callback<double[]>() {
             @Override
-            public void onResponse(Call<Bus> call, Response<Bus> response) {
-               displayBus(response.body());
+            public void onResponse(Call<double[]> call, Response<double[]> response) {
+                double[] latlon = response.body();
+                Bus bus = new Bus(latlon[0], latlon[1]);
+               displayBus(bus);
             }
 
             @Override
-            public void onFailure(Call<Bus> call, Throwable t) {
+            public void onFailure(Call<double[]> call, Throwable t) {
 
             }
         });
     }
 
 
-    public void moveToPosition(){
+    public void createUser(){
 
-        String locationProvider = LocationManager.NETWORK_PROVIDER;
+       /* String locationProvider = LocationManager.NETWORK_PROVIDER;
         if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
 
             ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
                     LocationService.MY_PERMISSION_ACCESS_COURSE_LOCATION );
         }
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+        LatLng latLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
         sendNewLocation(lastKnownLocation);
-        Call<ResponseBody> call = dataService.createUser();
-        call.enqueue(new Callback<ResponseBody>() {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
+        mMap.animateCamera(cameraUpdate);*/
+
+
+        Call<String> call = dataService.createUser();
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                user.id = Integer.parseInt(response.body().toString());
+            public void onResponse(Call<String> call, Response<String> response) {
+                user.id = Integer.parseInt(response.body());
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
 
             }
         });
@@ -173,7 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void displayBus(Bus bus) {
         LatLng latLng = new LatLng(bus.lat, bus.lon);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(5));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
         mMap.addMarker(new MarkerOptions().position(latLng).title("You are here!"));
     }
 }

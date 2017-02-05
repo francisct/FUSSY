@@ -19,7 +19,7 @@ import retrofit2.http.Query;
 public interface DataService {
 
     @GET("createUser")
-    Call<ResponseBody> createUser();
+    Call<String> createUser();
 
     @GET("updateBusPosition")
     Call<ResponseBody> updateBusPosition(@Query("userId") int user,
@@ -28,5 +28,5 @@ public interface DataService {
                                          @Query("lon") double lon);
 
     @GET("getBusPosition")
-    Call<Bus> getBusPosition(@Query("id") int id);
+    Call<double[]> getBusPosition(@Query("id") int id);
 }

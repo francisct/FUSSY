@@ -18,8 +18,8 @@ namespace FussyBackEnd
                 if (newBus.id == bus.id)
                 {
                     bus.id = newBus.id;
-                    bus.latitude = newBus.latitude;
-                    bus.longitude = newBus.longitude;
+                    bus.lat = newBus.lat;
+                    bus.lon = newBus.lon;
                     return;
                 }
             }

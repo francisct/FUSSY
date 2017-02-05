@@ -9,8 +9,8 @@ namespace FussyBackEnd
     public class Bus
     {
         public int id { get; set; }
-        public double longitude { get; set; }
-        public double latitude { get; set; }
+        public double lon { get; set; }
+        public double lat { get; set; }
         public List<User> userList { get; set; }
         public Bus(int id)
         {
@@ -21,16 +21,19 @@ namespace FussyBackEnd
      
         public void AddUser(User newUser)
         {
-            foreach (User user in userList)
+            for (int i =0; i < userList.Count(); i++)
             {
-                if (newUser.id == user.id)
+                if (userList[i].id == newUser.id)
                 {
+                    userList[i] = newUser;
+                    updatePos();
                     return;
                 }
                 
 
             }
             userList.Add(newUser);
+            updatePos();
             return;
         }
 
@@ -41,30 +44,37 @@ namespace FussyBackEnd
                 if (oldUser.id == user.id)
                 {
                     userList.Remove(oldUser);
+                    updatePos();
                     return;
                 }              
             }
             return;
         }
 
-        public double AverageLat()
+        private void updatePos()
+        {
+            lat = AverageLat();
+            lon = AverageLon();
+        }
+
+        private double AverageLat()
         {
             double sumLat = 0;
             foreach (User user in userList)
             {
-                sumLat = +user.latitude;
+                sumLat = +user.lat;
                 
             }
             double avgLat = sumLat / userList.Count();
             return avgLat;
         }
 
-        public double AverageLon()
+        private double AverageLon()
         {
             double sumLon = 0;
             foreach (User user in userList)
             {
-                sumLon = +user.longitude;
+                sumLon = +user.lon;
             }
             double avgLon = sumLon / userList.Count();
             return avgLon;

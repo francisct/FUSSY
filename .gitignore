@@ -1,10 +1,13 @@
 backend/FussyBackEnd/.vs/
 backend/FussyBackEnd/src/FussyBackEnd/obj/
-backend/FussyBackEnd/src/ussyBackEnd/bin/
-/packages/
-!packages/repositories.config
+backend/FussyBackEnd/src/FussyBackEnd/bin/
+backend/FussyBackEnd/src/FussyBackEnd/properties/
 backend/FussyBackEnd/packages/
 backend/FussyBackEnd/src/backend/FussyBackEnd/wwwroot/lib/
 backend/FussyBackEnd/src/backend/FussyBackEnd/project.lock.json
+backend/FussyBackEnd/src/backend/FussyBackEnd/FussyBackEnd.xproj.user
+
+
+
 app/.idea/
 .idea/

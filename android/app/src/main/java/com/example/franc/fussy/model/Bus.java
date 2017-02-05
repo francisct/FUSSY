@@ -8,4 +8,9 @@ public class Bus {
     int id;
     public double lat;
     public double lon;
+
+    public Bus(double lat, double lon){
+        this.lat =lat;
+        this.lon = lon;
+    }
 }
