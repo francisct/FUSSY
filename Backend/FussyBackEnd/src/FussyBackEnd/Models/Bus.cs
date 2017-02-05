@@ -15,16 +15,10 @@ namespace FussyBackEnd
         public Bus(int id)
         {
             this.id = id;
+            userList = new List<User>();
         }
 
-        public Bus(int id,double longitude, double latitude, List<User> userList)
-        {
-            this.id = id;
-            this.longitude = longitude;
-            this.latitude = latitude;
-            this.userList = userList;
-        }
-
+     
      
         public void AddUser(User newUser)
         {
@@ -76,5 +70,6 @@ namespace FussyBackEnd
             double avgLon = sumLon / userList.Count();
             return avgLon;
         }
+
     }
 }

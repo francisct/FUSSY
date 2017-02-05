@@ -11,64 +11,64 @@ namespace FussyBackEnd
     public class ValuesController : Controller
     {
 
-        BusRepo busRepo = new BusRepo();
+        BusRepo busRepo;
         
-       
-
-        // GET api/values
-        [HttpGet]
-        [Route("init")]
-        public void init()
+       public ValuesController()
         {
-            Bus bus1 = new Bus(1);
-            Bus bus2 = new Bus(2);
-            Bus bus3 = new Bus(3);
-            Bus bus4 = new Bus(4);
-            Bus bus5 = new Bus(5);
+            if (busRepo == null)
+            {
+                busRepo = new BusRepo();
+                Bus bus1 = new Bus(1);
+                Bus bus2 = new Bus(2);
+                Bus bus3 = new Bus(3);
+                Bus bus4 = new Bus(4);
+                Bus bus5 = new Bus(5);
 
-            busRepo.AddBus(bus1);
-            busRepo.AddBus(bus2);
-            busRepo.AddBus(bus3);
-            busRepo.AddBus(bus4);
-            busRepo.AddBus(bus5);
+                busRepo.AddBus(bus1);
+                busRepo.AddBus(bus2);
+                busRepo.AddBus(bus3);
+                busRepo.AddBus(bus4);
+                busRepo.AddBus(bus5);
+            }
         }
 
-        // GET api/values/5
-        [HttpPost]
-        [Route("updateBusPosition")]
-        public void updateBusPosition([FromBody] User httpUser)
+
+        [HttpGet]
+        public String Get()
         {
-            Bus currentBus = busRepo.getBus(httpUser.id);
+            return "Completement correct";
+        }
+
+        [HttpGet]
+        [Route("updateBusPosition")]
+        public String Get([FromQuery] int userId, [FromQuery] int busId, [FromQuery] double lat, [FromQuery] double lon)
+        {
+            Bus currentBus = busRepo.getBus(busId);
             if (currentBus != null)
             {
-                currentBus.AddUser(httpUser);
+        //        Bus bus = new FussyBackEnd.Bus(busId);
+                User user = new FussyBackEnd.User(userId, lon, lat, currentBus);
+                currentBus.AddUser(user);
                 currentBus.latitude = currentBus.AverageLat();
                 currentBus.longitude = currentBus.AverageLon();
+                busRepo.AddBus(currentBus);
             }
-            
+
+            return "ok!";
 
         }
 
 
         // POST api/values
-        [HttpPost]
-        public IEnumerable<double> getBusPosition(int id)
+        [HttpGet]
+        [Route("getBusPosition")]
+        public IEnumerable<double> Get([FromQuery]int id)
         {
             double lat = busRepo.getBus(id).latitude;
             double lon = busRepo.getBus(id).longitude;
             return new double[] {lat,lon};
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+      
     }
 }

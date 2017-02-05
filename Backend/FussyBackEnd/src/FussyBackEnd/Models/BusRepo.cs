@@ -9,12 +9,21 @@ namespace FussyBackEnd
     {
         public List<Bus> busList { get; set; }
 
-        public BusRepo() { busList = new List<Bus>() }
+        public BusRepo() { busList = new List<Bus>();}
 
-        public void AddBus(Bus bus)
+        public void AddBus(Bus newBus)
         {
-            if (busList.Exists(x => x.id == bus.id)) { }
-            else busList.Add(bus);
+            foreach (Bus bus in busList)
+            {
+                if (newBus.id == bus.id)
+                {
+                    bus.id = newBus.id;
+                    bus.latitude = newBus.latitude;
+                    bus.longitude = newBus.longitude;
+                    return;
+                }
+            }
+             busList.Add(newBus);
 
         }
         public void RemoveBus(int id)
