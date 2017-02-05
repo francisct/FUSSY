@@ -1,27 +1,19 @@
 package com.example.franc.fussy;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.franc.fussy.model.Bus;
 import com.example.franc.fussy.model.User;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -42,7 +34,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback  {
     GoogleMap mMap;
-    private LocationManager locationManager;
+
     User user;
     DataService dataService;
     int busNo = 0;
@@ -58,32 +50,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        // Acquire a reference to the system Location Manager
-         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-// Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                sendNewLocation(location);
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
-        };
-
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-
-            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
-                    LocationService.MY_PERMISSION_ACCESS_COURSE_LOCATION );
-        }
-
-// Register the listener with the Location Manager to receive location updates
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://fussybus.azurewebsites.net/api/values/")
@@ -110,14 +76,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
     }
 
-    private void sendNewLocation(Location location){
+    public void sendNewLocation(Location location){
         if (user.id != 0) {
             user.lat = location.getLatitude();
             user.lon = location.getLongitude();
             Call<ResponseBody> call = dataService.updateBusPosition(user.id, user.bus, user.lat, user.lon);
+
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -154,19 +120,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     public void createUser(){
-
-       /* String locationProvider = LocationManager.NETWORK_PROVIDER;
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-
-            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
-                    LocationService.MY_PERMISSION_ACCESS_COURSE_LOCATION );
-        }
-        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-        LatLng latLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-        sendNewLocation(lastKnownLocation);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
-        mMap.animateCamera(cameraUpdate);*/
-
 
         Call<String> call = dataService.createUser();
         call.enqueue(new Callback<String>() {
