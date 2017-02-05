@@ -1,2 +1,2 @@
 # FUSSY
-Mobile app to track buses
+Mobile app to track buses using user's data
