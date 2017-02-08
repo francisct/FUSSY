@@ -3,6 +3,6 @@ Mobile app to track buses. FUSSY requires no infrastructure or additional hardwa
 It means that FUSSY is ready to be used in any location.
 
 # Contributors
-Android: Francisct
-asp.net core web api: Majeanson
+Android: Francisct <br />
+ASP.NET core web api: Majeanson
 
